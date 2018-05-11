@@ -37,7 +37,7 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public void handleMessage(Message msg) {
             //super.handleMessage(msg);
-            Toast.makeText(MainActivity.this, (String) msg.obj, Toast.LENGTH_LONG).show();
+            Toast.makeText(MainActivity.this, ""+ msg.obj, Toast.LENGTH_LONG).show();
         }
     };
     private Button btnScan;
@@ -88,6 +88,9 @@ public class MainActivity extends AppCompatActivity {
         btnScan.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if(adapterBT.isDiscovering()){
+                    return;
+                }
                 //listData.clear();
                 deviceList.clear();
                 Set<BluetoothDevice> pairedDevices = adapterBT.getBondedDevices();
@@ -101,9 +104,6 @@ public class MainActivity extends AppCompatActivity {
                         Log.i("tag","bondeddevice.state==="+device.getBondState());
                     }
                 }
-                if(adapterBT.isDiscovering()){
-                    return;
-                }
                 adapterBT.startDiscovery();
                 mHandler.postDelayed(new Runnable() {
                     @Override
@@ -113,16 +113,16 @@ public class MainActivity extends AppCompatActivity {
                 },30000);
             }
         });
-       lv_devices.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        lv_devices.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, final int position, long id) {
                 try {
                     //第一种配对方法：deviceList.get(position).createBond();
-                   //第二种配对方法：Method createBondMethod = BluetoothDevice.class.getMethod("createBond");
-                   // Object socket = createBondMethod.invoke(deviceList.get(position));
-                    deviceList.get(position).createBond();
+                    //第二种配对方法：Method createBondMethod = BluetoothDevice.class.getMethod("createBond");
+                    // Object socket = createBondMethod.invoke(deviceList.get(position));
+                    //deviceList.get(position).createBond();
                     LayoutInflater inflater = getLayoutInflater();
-                   View itemView=inflater.inflate(R.layout.item_edittext_dialog,null);
+                    View itemView=inflater.inflate(R.layout.item_edittext_dialog,null);
                     final TextInputLayout contentBT = (TextInputLayout) itemView.findViewById(R.id.textInput_name);
                     AlertDialog builder=new AlertDialog.Builder(MainActivity.this)
                             .setTitle("蓝牙发送内容：")
@@ -134,7 +134,7 @@ public class MainActivity extends AppCompatActivity {
                                     adapterBT.cancelDiscovery();
                                     String ct = contentBT.getEditText().getText().toString();
                                     if(!ct.isEmpty()){
-                                        ConnectThread connectThread = new ConnectThread(MainActivity.this,adapterBT.getRemoteDevice(deviceList.get(position).getAddress()),ct);
+                                        ConnectThread connectThread = new ConnectThread(MainActivity.this,deviceList.get(position),ct);
                                         connectThread.start();
                                     }
                                 }
@@ -162,10 +162,6 @@ public class MainActivity extends AppCompatActivity {
         public void onReceive(Context context, Intent intent) {
             if (intent.getAction().equals(BluetoothDevice.ACTION_FOUND)) {
                 BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
-                Map<String ,String> map=new HashMap<>();
-                map.put("name",device.getName());
-                map.put("Id",device.getAddress());
-                listData.add(map);
                 deviceList.add(device);
                 Log.i("tag", "device===" + device.getName() + "\ndeviceId===" + device.getAddress()+"\ndeviceState==="+device.getBondState());
             }

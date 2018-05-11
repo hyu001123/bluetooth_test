@@ -97,26 +97,26 @@ public class BTAdapter extends BaseAdapter{
         }else{
             holder=(ViewHolder)convertView.getTag();
         }
-            holder.btName.setText(listDevice.get(position).getName());
-            holder.btAddress.setText(listDevice.get(position).getAddress());
-            if(listDevice.get(position).getBondState()==12){
-                holder.btState.setText("已配对");
-                holder.btButton.setVisibility(View.GONE);
-            }else{
-                holder.btState.setText("未配对");
-                holder.btButton.setVisibility(View.VISIBLE);
-            }
+        holder.btName.setText(listDevice.get(position).getName());
+        holder.btAddress.setText(listDevice.get(position).getAddress());
+        if(listDevice.get(position).getBondState()==12){
+            holder.btState.setText("已配对");
+            holder.btButton.setVisibility(View.GONE);
+        }else{
+            holder.btState.setText("未配对");
+            holder.btButton.setVisibility(View.VISIBLE);
+        }
 
-            holder.btButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    ConnectThread thread = new ConnectThread(context, listDevice.get(position));
-                    thread.start();
-                       holder.btState.setText("已配对");
-                       holder.btButton.setVisibility(View.GONE);
-                    Toast.makeText(context,"正在连接中.....",Toast.LENGTH_LONG).show();
+        holder.btButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(listDevice.get(position).createBond()) {
+                    holder.btState.setText("已配对");
+                    holder.btButton.setVisibility(View.GONE);
                 }
-            });
+                Toast.makeText(context,"正在连接中.....",Toast.LENGTH_LONG).show();
+            }
+        });
         return convertView;
     }
 

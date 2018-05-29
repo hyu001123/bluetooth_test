@@ -20,7 +20,7 @@ import java.util.List;
 import java.util.UUID;
 
 public class ConnectThread extends Thread{
-    private BluetoothSocket mmSocket;
+    private final BluetoothSocket mmSocket;
     private final BluetoothDevice mmDevice;
     private final Context context;
     private final String text;
@@ -31,13 +31,19 @@ public class ConnectThread extends Thread{
         // Use a temporary object that is later assigned to mmSocket,
         // because mmSocket is final
         mmDevice = device;
+        BluetoothSocket tmp=null;
         this.context=context;
         this.text=text;
         StringBuilder sb=new StringBuilder();
         Log.i("info",sb.append(Arrays.toString(device.getUuids())).toString());
 
         // Get a BluetoothSocket to connect with the given BluetoothDevice
-
+        try {
+            tmp=mmDevice.createRfcommSocketToServiceRecord(UUID.fromString("00001105-0000-1000-8000-00805f9b34fb"));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        mmSocket=tmp;
     }
 
     public void run() {
@@ -46,22 +52,11 @@ public class ConnectThread extends Thread{
 
         try {
 
-            mmSocket=mmDevice.createInsecureRfcommSocketToServiceRecord(UUID.fromString("00001105-0000-1000-8000-00805f9b34fb"));
+
             // Connect the device through the socket. This will block
             // until it succeeds or throws an exception
             //mmSocket =(BluetoothSocket) mmDevice.getClass().getMethod("createRfcommSocket", new Class[] {int.class}).invoke(mmDevice,1);
             mmSocket.connect();
-        }catch (IOException e) {
-            try {
-                //mmDevice.createBond();//SDK5.1要加上这个，否则报连接不上
-                //BluetoothSocket a = new BluetoothSocket(1, -1, false, false, mmDevice, -1, UUID.fromString("00001105-0000-1000-8000-00805f9b34fb"));
-                //mmSocket=mmDevice.createInsecureRfcommSocketToServiceRecord(UUID.fromString("00001105-0000-1000-8000-00805f9b34fb"));
-                mmSocket.connect();
-            } catch (EOFException e1) {
-            } catch (IOException e1) {
-                e1.printStackTrace();
-            }
-
         }catch (Exception connectException) {
             // Unable to connect; close the socket and get out
             connectException.printStackTrace();
@@ -71,12 +66,13 @@ public class ConnectThread extends Thread{
             return;
         }
 
+
         // Do work to manage the connection (in a separate thread)
         manageConnectedSocket(mmSocket);
         Log.i("tag","mmsocket===="+mmSocket);
     }
 
-    private void manageConnectedSocket(final BluetoothSocket mmSocket) {
+    public void manageConnectedSocket(final BluetoothSocket mmSocket) {
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -100,6 +96,15 @@ public class ConnectThread extends Thread{
                 Looper.loop();
             }
         }).start();
+    }
+
+    public void cancel(){
+        try {
+            mmSocket.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+            Log.i("tag","close connect socket is failed!!!");
+        }
     }
 
 }

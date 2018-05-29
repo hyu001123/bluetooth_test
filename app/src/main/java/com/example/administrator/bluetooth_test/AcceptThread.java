@@ -5,6 +5,7 @@ import android.bluetooth.BluetoothServerSocket;
 import android.bluetooth.BluetoothSocket;
 import android.os.Handler;
 import android.os.Message;
+import android.util.Log;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -49,7 +50,6 @@ public class AcceptThread extends Thread{
             // 获取到输入流
 
             // 获取到输出流
-            int len=0;
             // 无线循环来接收数据
 
             byte[] buffer = new byte[128];
@@ -64,5 +64,16 @@ public class AcceptThread extends Thread{
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    public void onDestroy(){
+        try {
+            socket.close();
+            serverSocket.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+            Log.i("tag","accept socket close is failed");
+        }
+
     }
 }

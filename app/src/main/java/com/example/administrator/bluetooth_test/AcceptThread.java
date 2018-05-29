@@ -32,7 +32,7 @@ public class AcceptThread extends Thread{
                     UUID.fromString("00001105-0000-1000-8000-00805f9b34fb"));
             while (true) {
                 socket = serverSocket.accept();
-                progressSocket(socket);
+               // progressSocket(socket);
             }
         }
         catch (Exception e) {

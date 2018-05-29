@@ -7,7 +7,10 @@ import android.bluetooth.BluetoothClass;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothManager;
 import android.bluetooth.BluetoothProfile;
+<<<<<<< HEAD
 import android.bluetooth.BluetoothSocket;
+=======
+>>>>>>> 9cd45018f90141f660dbe35af4a472251b113796
 import android.bluetooth.le.AdvertiseCallback;
 import android.bluetooth.le.AdvertiseData;
 import android.bluetooth.le.AdvertiseSettings;
@@ -46,7 +49,10 @@ import android.widget.Toast;
 
 import com.example.administrator.bluetooth_test.adapter.BTAdapter;
 
+<<<<<<< HEAD
 import java.io.IOException;
+=======
+>>>>>>> 9cd45018f90141f660dbe35af4a472251b113796
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -80,7 +86,10 @@ public class MainActivity extends AppCompatActivity {
     private ScanCallback scanCallback;
     private BluetoothLeAdvertiser mBluetoothLeAdvertiser;
     private BluetoothProfile a2dpProfile;
+<<<<<<< HEAD
     private ConnectThread connectThread;
+=======
+>>>>>>> 9cd45018f90141f660dbe35af4a472251b113796
 
 
     @RequiresApi(api = Build.VERSION_CODES.M)
@@ -99,10 +108,15 @@ public class MainActivity extends AppCompatActivity {
         initBlueTooth();
         initView();
         //经典蓝牙开启服务端
+<<<<<<< HEAD
         if(acceptThread==null){
             acceptThread=new AcceptThread(adapterBT,mHandler);
             acceptThread.start();
         }
+=======
+        acceptAdapter=new AcceptThread(adapterBT,mHandler);
+        acceptAdapter.start();
+>>>>>>> 9cd45018f90141f660dbe35af4a472251b113796
     }
 
 
@@ -212,6 +226,7 @@ public class MainActivity extends AppCompatActivity {
                     //第二种配对方法：Method createBondMethod = BluetoothDevice.class.getMethod("createBond");
                     // Object socket = createBondMethod.invoke(deviceList.get(position));
                     //deviceList.get(position).createBond();
+<<<<<<< HEAD
                     if(deviceList.get(position).getBluetoothClass().getMajorDeviceClass()>532){
                         a2dpConnect(deviceList.get(position));
                     }else{
@@ -240,6 +255,25 @@ public class MainActivity extends AppCompatActivity {
                                                 connectThread = new ConnectThread(MainActivity.this,deviceList.get(position),ct);
                                                 connectThread.start();
                                         }
+=======
+                    a2dpConnect(deviceList.get(position));
+                    LayoutInflater inflater = getLayoutInflater();
+                    View itemView=inflater.inflate(R.layout.item_edittext_dialog,null);
+                    final TextInputLayout contentBT = (TextInputLayout) itemView.findViewById(R.id.textInput_name);
+                    AlertDialog builder=new AlertDialog.Builder(MainActivity.this)
+                            .setTitle("蓝牙发送内容：")
+                            .setView(itemView)
+                            .setNegativeButton("取消",null)
+                            .setPositiveButton("发送", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    adapterBT.cancelDiscovery();
+                                    String ct = contentBT.getEditText().getText().toString();
+                                    if(!ct.isEmpty()){
+                                        ConnectThread connectThread = new ConnectThread(MainActivity.this,deviceList.get(position),ct);
+                                        connectThread.start();
+
+>>>>>>> 9cd45018f90141f660dbe35af4a472251b113796
                                     }
                                 }).show();
                     }
@@ -399,9 +433,13 @@ public class MainActivity extends AppCompatActivity {
                 Log.e("tag","error:" + e.toString());
             }
             Log.i("tag","连接设备类型;"+String.valueOf((device.getBluetoothClass().getDeviceClass())& 0x1F00));
+<<<<<<< HEAD
             Log.i("tag","连接设备类型;"+String.valueOf((device.getBluetoothClass().getMajorDeviceClass())));
             //BluetoothClass.Device.Major.PHONE
 
+=======
+            //BluetoothClass.Device.Major.PHONE
+>>>>>>> 9cd45018f90141f660dbe35af4a472251b113796
         }
     }
 
